@@ -1,6 +1,6 @@
 # MGLL: Multi-Granular Language Learning
 
-This repository is the official implementation of the paper *“Boosting Visual Understanding From Multi-Granular Language Learning”*. 
+This repository is the official implementation of the paper *“Boosting Medical Visual Understanding From Multi-Granular Language Learning”*. 
 
  ## Abstract
 
@@ -31,4 +31,5 @@ You can set your parameters in `./exps/downstream.sh` and train your own model b
 ```bash
 bash ./exps/downstream.sh
 ```
+
 
