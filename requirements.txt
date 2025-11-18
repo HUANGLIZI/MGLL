@@ -1,0 +1,13 @@
+torch==2.5.0
+torchvision
+torchaudio
+timm
+open_clip
+einops
+numpy
+matplotlib
+pandas
+pillow
+torchmetrics
+transformers
+sentencepiece
