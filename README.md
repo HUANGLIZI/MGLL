@@ -32,4 +32,11 @@ You can set your parameters in `./exps/downstream.sh` and train your own model b
 bash ./exps/downstream.sh
 ```
 
-
+To obtain pre-trained models and the dataset, you can contact the email address zhanli@uw.edu. We just handle the **real-name email** and **your email suffix must match your affiliation**. The email should contain the following information:
+```angular2html
+Name/Homepage/Google Scholar: (Tell us who you are.)
+Primary Affiliation: (The name of your institution or university, etc.)
+Job Title: (E.g., Professor, Associate Professor, Ph.D., etc.)
+Affiliation Email: (the password will be sent to this email, we just reply to the email which is the end of "edu".)
+How to use: (Only for academic research, not for commercial use or second-development.)
+```
