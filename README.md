@@ -1,6 +1,6 @@
 # MGLL: Multi-Granular Language Learning
 
-This repository is the official implementation of the paper *“Boosting Medical Visual Understanding From Multi-Granular Language Learning”*. 
+This repository is the official implementation of the paper *“Boosting Medical Visual Understanding From Multi-Granular Language Learning”*. [Arxiv](https://arxiv.org/abs/2511.15943)
 
  ## Abstract
 
@@ -40,3 +40,4 @@ Job Title: (E.g., Professor, Associate Professor, Ph.D., etc.)
 Affiliation Email: (the password will be sent to this email, we just reply to the email which is the end of "edu".)
 How to use: (Only for academic research, not for commercial use or second-development.)
 ```
+
