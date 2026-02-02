@@ -16,9 +16,9 @@ pip install -r requirements.txt
 
 ## Dataset and Pretrain Model Weights
 
-MGLL-Fundus dataset [link](https://drive.google.com/drive/folders/18-7d9ohHKqLosvONKEwv5ug_sX7Jjkd1)
+MGLL-Fundus dataset: [Image](https://drive.google.com/drive/folders/1gN3lzHQFECIJH1XqnY9GA5pBWCM1N0Io), [Text](https://drive.google.com/drive/folders/18-7d9ohHKqLosvONKEwv5ug_sX7Jjkd1)
 
-Pretrain Model on MGLL-Fundus [link](https://drive.google.com/drive/folders/1zaM7qVOgHdWVcf9mVe-WI8Vpaf0W2Md2?usp=drive_link)
+Pretrain Model on MGLL-Fundus [link](https://drive.google.com/drive/folders/1zaM7qVOgHdWVcf9mVe-WI8Vpaf0W2Md2)
 
 ## Usage
 
@@ -46,6 +46,7 @@ Job Title: (E.g., Professor, Associate Professor, Ph.D., etc.)
 Affiliation Email: (the password will be sent to this email, we just reply to the email which is the end of "edu".)
 How to use: (Only for academic research, not for commercial use or second-development.)
 ```
+
 
 
 
