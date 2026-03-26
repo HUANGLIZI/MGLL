@@ -1,6 +1,6 @@
 # MGLL: Multi-Granular Language Learning
 
-This repository is the official implementation of the paper *“Boosting Medical Visual Understanding From Multi-Granular Language Learning”* (ICLR 2026). [Arxiv](https://arxiv.org/abs/2511.15943), [ResearchGate](https://www.researchgate.net/publication/397824340_Boosting_Medical_Visual_Understanding_From_Multi-Granular_Language_Learning)
+This repository is the official implementation of the paper *“Boosting Medical Visual Understanding From Multi-Granular Language Learning”* ([ICLR 2026](https://iclr.cc/virtual/2026/poster/10008485)). [Arxiv](https://arxiv.org/abs/2511.15943), [ResearchGate](https://www.researchgate.net/publication/397824340_Boosting_Medical_Visual_Understanding_From_Multi-Granular_Language_Learning)
 
  ## Abstract
 
