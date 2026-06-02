@@ -53,10 +53,18 @@ Affiliation Email: (the password will be sent to this email, we just reply to th
 How to use: (Only for academic research, not for commercial use or second-development.)
 ```
 
+If you use the data provided by us, please cite the MGLL.
 
+## Citation
 
-
-
+```bash
+@inproceedings{li2026boosting,
+  title={Boosting Medical Visual Understanding From Multi-Granular Language Learning},
+  author={Li, Zihan and Wang, Yiqing and Farsiu, Sina and Kinahan, Paul},
+  booktitle={International Conference on Learning Representations},
+  year={2026}
+}
+```
 
 
 
