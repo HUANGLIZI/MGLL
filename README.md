@@ -59,9 +59,11 @@ If you use the data provided by us, please cite the MGLL.
 
 ```bash
 @inproceedings{li2026boosting,
-  title={Boosting Medical Visual Understanding From Multi-Granular Language Learning},
+  title={Boosting medical visual understanding from multi-granular language learning},
   author={Li, Zihan and Wang, Yiqing and Farsiu, Sina and Kinahan, Paul},
   booktitle={International Conference on Learning Representations},
+  volume={2026},
+  pages={110295--110334},
   year={2026}
 }
 ```
