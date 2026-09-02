@@ -4,7 +4,7 @@ from torch.utils.data import Dataset
 import torchvision.transforms as transforms
 import util.misc as misc
 from util.misc import NativeScalerWithGradNormCount as NativeScaler
-from util.datasets import PretrainMMFundusDataset
+from util.datasets import PretrainMMFundusDataset, ManifestFundusDataset
 from models.pretrain import CLIPBaseline, MultiGranularModule
 import random
 import argparse
@@ -44,7 +44,7 @@ def get_args_parser():
 
     parser.add_argument('--input_size', default=224, type=int,
                         help='images input size')
-    parser.add_argument('--clip_grad', type=int, default=-1,
+    parser.add_argument('--clip_grad', type=float, default=-1,
                         help='grad clipping norm')
     # Optimizer parameters
     parser.add_argument('--optimizer', default='adamw', type=str, metavar='OPTIMIZER',
@@ -67,6 +67,14 @@ def get_args_parser():
                         help='dataset path')
     parser.add_argument('--json_list', default='original_list', type=str,
                         help='json list file name')
+    parser.add_argument('--manifest', default='', type=str,
+                        help='path to released-data manifest json')
+    parser.add_argument('--project_root', default='', type=str,
+                        help='project root used to resolve relative manifest image paths')
+    parser.add_argument('--train_limit', default=0, type=int,
+                        help='optional train sample limit for debug runs')
+    parser.add_argument('--val_limit', default=0, type=int,
+                        help='optional val sample limit for debug runs')
     parser.add_argument('--output_dir', default='./output_dir',
                         help='path where to save, empty for no saving')
     parser.add_argument('--device', default='cuda',
@@ -181,8 +189,27 @@ def main(args):
         # transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
     ])
 
-    dataset_train = PretrainMMFundusDataset(data_dir=args.data_dir, json_list=args.json_list, transform=transform_train, max_words=512, partition='train', tokenizer_path=llama_tokenzier_path)
-    dataset_val = PretrainMMFundusDataset(data_dir=args.data_dir, json_list=args.json_list, transform=transform_val, max_words=512, partition='val', tokenizer_path=llama_tokenzier_path)
+    if args.manifest:
+        project_root = args.project_root if args.project_root else args.data_dir
+        dataset_train = ManifestFundusDataset(
+            manifest_path=args.manifest,
+            project_root=project_root,
+            transform=transform_train,
+            partition='train',
+            train_limit=args.train_limit,
+            val_limit=args.val_limit,
+        )
+        dataset_val = ManifestFundusDataset(
+            manifest_path=args.manifest,
+            project_root=project_root,
+            transform=transform_val,
+            partition='val',
+            train_limit=args.train_limit,
+            val_limit=args.val_limit,
+        )
+    else:
+        dataset_train = PretrainMMFundusDataset(data_dir=args.data_dir, json_list=args.json_list, transform=transform_train, max_words=512, partition='train', tokenizer_path=llama_tokenzier_path)
+        dataset_val = PretrainMMFundusDataset(data_dir=args.data_dir, json_list=args.json_list, transform=transform_val, max_words=512, partition='val', tokenizer_path=llama_tokenzier_path)
     
 
     num_tasks = misc.get_world_size()

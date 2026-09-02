@@ -1,4 +1,13 @@
-from .llama import ModelArgs, Transformer
 from .tokenizer import Tokenizer
 from .pretrain import *
-from .utils import format_prompt
+
+try:
+    from .llama import ModelArgs, Transformer
+except ImportError:
+    ModelArgs = None
+    Transformer = None
+
+try:
+    from .utils import format_prompt
+except ImportError:
+    format_prompt = None
