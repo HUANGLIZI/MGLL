@@ -393,8 +393,14 @@ class MultiGranularModule(nn.Module):
         return ce_loss
     
     def kl_loss_2(self, pred_logit_1, pred_logit_2):
-        M = 0.5 * (pred_logit_1+ pred_logit_2)
-        kl_loss = 0.5 * F.kl_div(pred_logit_1.log(), M, reduction='batchmean')+0.5 * F.kl_div(pred_logit_2.log(), M, reduction='batchmean')
+        log_p1 = F.log_softmax(pred_logit_1.float(), dim=-1)
+        log_p2 = F.log_softmax(pred_logit_2.float(), dim=-1)
+        p1 = log_p1.exp()
+        p2 = log_p2.exp()
+        mean_prob = (0.5 * (p1 + p2)).clamp_min(1e-8)
+        mean_prob = mean_prob / mean_prob.sum(dim=-1, keepdim=True)
+        log_mean = mean_prob.log()
+        kl_loss = 0.5 * F.kl_div(log_mean, p1, reduction='batchmean') + 0.5 * F.kl_div(log_mean, p2, reduction='batchmean')
         return kl_loss
     
     def kl_loss_3(self, pred_logit_1, pred_logit_2, pred_logit_3):
@@ -562,8 +568,9 @@ class MultiGranularModule(nn.Module):
             # clip_loss += self.softce_clip_loss(logits_per_modality, modality_target_list[i])
             # distill_loss = self.kl_loss_3(logits_per_text, logits_per_desc, logits_per_modality)*0.5
             distill_loss = self.kl_loss_2(logits_per_text, logits_per_desc)*0.5
-            if not torch.isnan(distill_loss) and not torch.isinf(distill_loss):
-                clip_loss += distill_loss
+            if not torch.isfinite(distill_loss).item():
+                raise FloatingPointError(f"Non-finite distillation loss detected: {distill_loss}")
+            clip_loss += distill_loss
             clip_score += self.contrastive_accuracy(logits_per_text.T, target_list[i])
             # clip_score += self.evaluate_mse(logits_per_text, target_list[i])
 

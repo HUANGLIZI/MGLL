@@ -20,6 +20,7 @@ def train_one_epoch(model: torch.nn.Module,
     accum_iter = args.accum_iter
 
     optimizer.zero_grad()
+    clip_grad = args.clip_grad if args.clip_grad is not None and args.clip_grad > 0 else None
 
     if log_writer is not None:
         print('log_dir: {}'.format(log_writer.log_dir))
@@ -43,9 +44,12 @@ def train_one_epoch(model: torch.nn.Module,
             sys.exit(1)
         loss /= accum_iter
         
-        loss_scaler(loss, optimizer, clip_grad = 10, parameters=model.parameters(),
-                    update_grad=(data_iter_step + 1) % accum_iter == 0)
-        if (data_iter_step + 1) % accum_iter == 0:
+        update_grad = (data_iter_step + 1) % accum_iter == 0
+        grad_norm = loss_scaler(loss, optimizer, clip_grad=clip_grad, parameters=model.parameters(),
+                                update_grad=update_grad)
+        if update_grad and grad_norm is not None and not torch.isfinite(grad_norm):
+            raise FloatingPointError(f"Non-finite gradient norm detected: {grad_norm}")
+        if update_grad:
             optimizer.zero_grad()
 
         torch.cuda.synchronize()
@@ -127,4 +131,3 @@ def val_one_epoch(model: torch.nn.Module,
     metric_logger.synchronize_between_processes()
     print("Averaged stats:", metric_logger)
     return {k: meter.global_avg for k, meter in metric_logger.meters.items()}
-

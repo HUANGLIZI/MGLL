@@ -4,7 +4,6 @@ from PIL import Image
 Image.LOAD_TRUNCATED_IMAGES = True
 import json
 import numpy as np
-from models import Tokenizer
 import torch
 from torch.utils.data import Dataset
 
@@ -37,8 +36,6 @@ class PretrainMMFundusDataset(Dataset):
         self.transform = transform
         self.max_words = max_words
         self.max_keywords = 32
-        tokenizer = Tokenizer(model_path=tokenizer_path)
-        self.tokenizer1 = tokenizer
         
     def __len__(self):
         return len(self.ann)
@@ -101,6 +98,81 @@ class PretrainMMFundusDataset(Dataset):
             return image, Keyword_list, Desc_list, Modality_list
         else:
             return image, Keyword_list, Desc_list
+
+
+class ManifestFundusDataset(Dataset):
+    def __init__(self, manifest_path, project_root, transform, partition='train', train_limit=0, val_limit=0):
+        with open(manifest_path, 'r') as f:
+            manifest = json.load(f)
+
+        split_name = 'validation' if partition in ('val', 'validation') else partition
+        records = self._resolve_split_records(manifest, split_name)
+        self.ann = []
+        for record in records:
+            self.ann.extend(self._flatten_record(record))
+
+        if split_name == 'train' and train_limit and train_limit > 0:
+            self.ann = self.ann[:train_limit]
+        if split_name == 'validation' and val_limit and val_limit > 0:
+            self.ann = self.ann[:val_limit]
+
+        self.project_root = project_root
+        self.transform = transform
+
+    def _resolve_split_records(self, manifest, split_name):
+        if split_name in manifest:
+            split_records = manifest[split_name]
+        elif 'splits' in manifest and split_name in manifest['splits']:
+            split_records = manifest['splits'][split_name]
+        else:
+            raise ValueError(f"Split '{split_name}' not found in manifest")
+        if not isinstance(split_records, list):
+            raise ValueError(f"Manifest split '{split_name}' must be a list")
+        return split_records
+
+    def _get_image_path(self, record):
+        image_path = (
+            record.get('image_path')
+            or record.get('path')
+            or record.get('image')
+            or record.get('ImageID')
+            or record.get('url')
+        )
+        if image_path is None:
+            raise ValueError("Manifest record is missing an image path field")
+        return image_path
+
+    def _flatten_record(self, record):
+        image_path = self._get_image_path(record)
+        annotations = record.get('annotations')
+        if not isinstance(annotations, list) or len(annotations) == 0:
+            annotations = [record]
+
+        flattened = []
+        for ann in annotations:
+            disease = ann.get('Disease', ann.get('disease', record.get('Disease', record.get('disease', ''))))
+            description = ann.get('Description', ann.get('description', record.get('Description', record.get('description', ''))))
+            flattened.append({
+                'image_path': image_path,
+                'disease': str(disease),
+                'description': str(description),
+            })
+        return flattened
+
+    def __len__(self):
+        return len(self.ann)
+
+    def __getitem__(self, index):
+        data_item = self.ann[index]
+        image_path = data_item['image_path']
+        if not os.path.isabs(image_path):
+            image_path = os.path.join(self.project_root, image_path)
+        image = Image.open(image_path).convert('RGB')
+        image = self.transform(image)
+
+        disease_text = f"This is a fundus image of {data_item['disease']}"
+        description_text = data_item['description']
+        return image, [disease_text], [description_text]
 
 
 class FinetuneMMFundusDataset(Dataset):
